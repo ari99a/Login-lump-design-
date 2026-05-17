@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Lamp Design</title>
+    <style>
+        :root {
+            --bg-off: #121417;
+            --bg-on: #1c1f24;
+            --lamp-off: #333;
+            --lamp-on: #fff;
+            --glow: rgba(255, 255, 255, 0.2);
+            --on: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-off);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.6s ease;
+            overflow: hidden;
+        }
+
+        body[data-on="true"] {
+            background-color: var(--bg-on);
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 100px;
+            z-index: 1;
+        }
+
+        /* Lamp Styling */
+        .lamp-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lamp-top {
+            width: 150px;
+            height: 80px;
+            background: #e0e0e0;
+            border-radius: 80px 80px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0px transparent;
+        }
+
+        body[data-on="true"] .lamp-top {
+            background: #fff;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.5), 
+                        0 0 100px rgba(255, 255, 255, 0.2);
+        }
+
+        .lamp-base {
+            width: 15px;
+            height: 120px;
+            background: #444;
+        }
+
+        .lamp-bottom {
+            width: 80px;
+            height: 10px;
+            background: #444;
+            border-radius: 5px;
+        }
+
+        .pull-chain {
+            position: absolute;
+            top: 80px;
+            right: 30px;
+            width: 2px;
+            height: 60px;
+            background: #666;
+            cursor: pointer;
+            transition: height 0.1s;
+        }
+
+        .pull-chain::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: -4px;
+            width: 10px;
+            height: 10px;
+            background: #886644;
+            border-radius: 50%;
+        }
+
+        .pull-chain:active {
+            height: 70px;
+        }
+
+        /* Login Form Styling */
+        .login-card {
+            width: 320px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            opacity: 0.3;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        body[data-on="true"] .login-card {
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-card h2 {
+            margin-top: 0;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .sign-in-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #d4af37, #f9e27d, #d4af37);
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .sign-in-btn:hover {
+            transform: scale(1.02);
+        }
+
+        /* Light Beam Effect */
+        .light-beam {
+            position: absolute;
+            top: 80px;
+            left: -175px;
+            width: 500px;
+            height: 600px;
+            background: radial-gradient(circle at top, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            clip-path: polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        body[data-on="true"] .light-beam {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body data-on="false">
+
+    <div class="container">
+        <div class="lamp-container">
+            <div class="lamp-top"></div>
+            <div class="lamp-base"></div>
+            <div class="lamp-bottom"></div>
+            <div class="pull-chain" id="chain"></div>
+            <div class="light-beam"></div>
+        </div>
+
+        <div class="login-card" id="loginCard">
+            <h2>Welcome</h2>
+            <form>
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" placeholder="the_coding_wizard">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="•••••">
+                </div>
+                <button type="button" class="sign-in-btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const chain = document.getElementById('chain');
+        let isOn = false;
+
+        chain.addEventListener('click', () => {
+            isOn = !isOn;
+            body.setAttribute('data-on', isOn);
+            
+            // Simple click sound effect (optional)
+            // const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+            // audio.play();
+        });
+    </script>
+</body>
+</html>
